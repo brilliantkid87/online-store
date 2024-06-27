@@ -73,3 +73,21 @@ func (r *ShoppingCartRepository) CheckoutAndPay(ctx context.Context, params map[
 
 	return transactionID, nil
 }
+
+func (r *ShoppingCartRepository) DeleteProductInCart(ctx context.Context, cart *models.ShoppingCart) error {
+	paramsJSON, err := json.Marshal(cart)
+	if err != nil {
+		log.Println("Error marshaling params:", err)
+		return err
+	}
+
+	query := `SELECT account.remove_from_cart($1::jsonb)`
+
+	result := r.DB.Exec(query, string(paramsJSON))
+	if result.Error != nil {
+		log.Println("Error executing remove product in cart:", result.Error)
+		return result.Error
+	}
+
+	return nil
+}

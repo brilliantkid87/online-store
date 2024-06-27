@@ -64,3 +64,23 @@ func (h *ShoppingCartHandler) CheckoutAndPay(c echo.Context) error {
 
 	return c.JSON(http.StatusOK, map[string]string{"transaction_id": transactionID})
 }
+
+func (h *ShoppingCartHandler) RemoveProductInCart(c echo.Context) error {
+	var cart models.ShoppingCart
+	if err := c.Bind(&cart); err != nil {
+		log.Println("Invalid input:", err)
+		return c.String(http.StatusBadRequest, "Invalid input")
+	}
+
+	if cart.UserId == "" || cart.CartId == "" {
+		return c.String(http.StatusBadRequest, "Missing or invalid required parameters")
+	}
+
+	err := h.Repo.DeleteProductInCart(c.Request().Context(), &cart)
+	if err != nil {
+		log.Println("Failed to add to cart:", err)
+		return c.String(http.StatusInternalServerError, "Failed to delete product in cart")
+	}
+
+	return c.JSON(http.StatusOK, "product item deleted successfully")
+}

@@ -17,4 +17,5 @@ func ShoppingCartRoutes(e *echo.Group) {
 	e.POST("/add-to-cart", middleware.Auth(cartHandler.AddToCart))
 	e.GET("/get-cart-user/:user_id", middleware.Auth(cartHandler.GetCartItems))
 	e.POST("/checkout", middleware.Auth(cartHandler.CheckoutAndPay))
+	e.POST("/delete-product", middleware.Auth(cartHandler.RemoveProductInCart))
 }
